@@ -19,7 +19,7 @@ void rotate(std::string inputFile, std::string outputFile) {
       HSLAPixel & inputPixel = inputImage.getPixel(x, y);  // Retrieve pixel from inputImage at location (x, y)
       HSLAPixel & outputPixel = outputImage.getPixel(outputImage.width()-1-x, outputImage.height()-1-y);  // Retrieve pixel from inputImage at location (outputImage.width()-1-x, outputImage.height()-1-y)
       
-      // Set the outputPixel equal to the inputPixel by setting the outputPixel's hue, saturation, luminance, and alpha value equal to inputPixel's hue, saturation, luminance, and alpha value equal to
+      // Set the outputPixel equal to the inputPixel by setting the outputPixel's HSLA values equal to inputPixel's HSLA values
       outputPixel.h = inputPixel.h;
       outputPixel.s = inputPixel.s;
       outputPixel.l = inputPixel.l;
@@ -33,8 +33,7 @@ void rotate(std::string inputFile, std::string outputFile) {
 
 PNG myArt(unsigned int width, unsigned int height) {
   PNG png(width, height);
-  // TODO: Part 3
   
-
+  
   return png;
 }
