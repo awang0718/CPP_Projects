@@ -6,6 +6,8 @@ using cs225::HSLAPixel;
 
 #include <string>
 
+#include <cmath>
+
 
 
 void rotate(std::string inputFile, std::string outputFile) {
@@ -32,8 +34,22 @@ void rotate(std::string inputFile, std::string outputFile) {
 
 
 PNG myArt(unsigned int width, unsigned int height) {
-  PNG png(width, height);
-  
+  //PNG png(width, height);
+  PNG png = PNG(width, height);
+
+  int centerX = width / 2;
+  int centerY = height / 2;
+
+  for (int x = 0; x < (int) png.width(); x++) {
+    for (int y = 0; y < (int) png.height(); y++) {
+      HSLAPixel & pixel = png.getPixel(x, y);  // Retrieve pixel from inputImage at location (x, y)
+             
+      pixel.h = (abs(x - centerX) + abs(y - centerY)) * 360 / (width / 2 + height / 2);
+      pixel.l = 0.7 - (abs(x - centerX) + abs(y - centerY)) * 0.4 / (width + height);
+      pixel.s = 0.7 - (abs(x - centerX) + abs(y - centerY)) * 0.4 / (width + height);
+      pixel.a = 1.0;
+    }
+  }
   
   return png;
 }
