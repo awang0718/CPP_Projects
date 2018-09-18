@@ -1,15 +1,12 @@
 #include <string>
-
-#include "Image.h"
-
-#include "cs225/PNG.h"
-using cs225::PNG;
-
-#include "cs225/HSLAPixel.h"
-using cs225::HSLAPixel;
-
 #include <cmath>
 #include <cstdlib>
+
+#include "Image.h"
+#include "cs225/PNG.h"
+using cs225::PNG;
+#include "cs225/HSLAPixel.h"
+using cs225::HSLAPixel;
 
 void Image::lighten (){
   for (unsigned x = 0; x < this->width(); x++) {
@@ -22,7 +19,7 @@ void Image::lighten (){
   }
 }
 
-void Image::lighten (double amount){
+void Image::lighten (double amount) {
   for (unsigned x = 0; x < this->width(); x++) {
     for (unsigned y = 0; y < this->height(); y++) {
       HSLAPixel & pixel = this->getPixel(x, y);  // Retrieve pixel from inputImage at location (x, y)

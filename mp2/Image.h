@@ -9,7 +9,6 @@
 
 #include "cs225/PNG.h"
 using cs225::PNG;
-
 #include "cs225/HSLAPixel.h"
 using cs225::HSLAPixel;
 
