@@ -29,11 +29,7 @@ class StickerSheet {
     Image render () const;
 
   private:
-    // Image* picture_;
-    // unsigned max_;
-    // unsigned x_;
-    // unsigned y_;
-
+    Image* sheet_;
     Image** picture_;
     unsigned max_;
     unsigned* x_;

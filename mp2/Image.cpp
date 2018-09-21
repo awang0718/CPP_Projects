@@ -148,18 +148,25 @@ void Image::scale (double factor){
       pixel = copy.getPixel((int)(x / factor), (int)(y / factor)); // Scale the image
     }
   }
-
 }
 
 void Image::scale (unsigned w, unsigned h){
-  Image copy = *this;
-  resize(w, h); // Resize the image
+  // Image copy = *this;
+  // resize(w, h); // Resize the image
 
-  // Scale the old copy image onto the new image
-  for (unsigned x = 0; x < w; x++) {
-    for (unsigned y = 0; y < h; y++) {
-      HSLAPixel & pixel = this->getPixel(x, y);
-      pixel = copy.getPixel((int)(x / (w / this->width())), (int)(y / (h / this->height())));  // Scale the image
-    }
-  }
+  double factorW= ((double)(w * 1.0)) / ((double)width() * 1.0);
+  double factorH = ((double)(h * 1.0)) / ((double)height() * 1.0);
+
+  // // Scale the old copy image onto the new image
+  // for (unsigned x = 0; x < w; x++) {
+  //   for (unsigned y = 0; y < h; y++) {
+  //     HSLAPixel & pixel = this->getPixel(x, y);
+  //     pixel = copy.getPixel((int)(x / factorW), (int)(y / factorH));  // Scale the image
+  //   }
+  // }
+
+  if (factorW < factorH)
+      scale(factorW);
+  else
+    scale(factorH);
 }
