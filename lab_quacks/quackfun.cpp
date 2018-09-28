@@ -25,16 +25,21 @@ namespace QuackFun {
 template <typename T>
 T sum(stack<T>& s)
 {
-
-    // Your code here
-    return T(); // stub return value (0 for primitive types). Change this!
+    if (s.size() == 0)
+    	return 0; // stub return value (0 for primitive types). Change this!
                 // Note: T() is the default value for objects, and 0 for
                 // primitive types
+
+    T popped = s.top();
+    s.pop();
+    T sum_ = popped + sum(s);   // Recursively add top element to sum of all other elements
+    s.push(popped);
+    return sum_;
 }
 
 /**
- * Checks whether the given string (stored in a queue) has balanced brackets. 
- * A string will consist of 
+ * Checks whether the given string (stored in a queue) has balanced brackets.
+ * A string will consist of
  * square bracket characters, [, ], and other characters. This function will return
  * true if and only if the square bracket characters in the given
  * string are balanced. For this to be true,
@@ -51,9 +56,21 @@ T sum(stack<T>& s)
  */
 bool isBalanced(queue<char> input)
 {
+  stack<char> myStack;
 
-    // @TODO: Make less optimistic
-    return true;
+  while(input.size() > 0) {
+  	if (input.front() == '[') {	// Pop '[' from queue to stack
+  	    myStack.push(input.front());
+  	}
+  	if (input.front() == ']') {	// Pop ']' from stack
+  	    if (myStack.size() == 0)
+  		return false;
+  	    else
+  		myStack.pop();
+  	}
+  	input.pop();
+  }
+  return myStack.size() == 0;
 }
 
 /**
@@ -71,10 +88,38 @@ bool isBalanced(queue<char> input)
 template <typename T>
 void scramble(queue<T>& q)
 {
-    stack<T> s;
-    // optional: queue<T> q2;
+  stack<T> s;
+  queue<T> q2;
 
-    // Your code here
+  int nums = 0;
+  while (q.size() > 0) {
+    nums++;
+    if (nums%2 == 1) {  // If nums is odd, pop top elements from queue to back of queue2
+      for(int j = 0; j < nums; j++){
+        if(q.size() == 0)
+           break;
+        q2.push(q.front());
+        q.pop();
+      }
+    }
+    else {  // If nums is even, pop top elements from queue to stack, then pop to back of queue2
+      for(int j = 0; j < nums; j++) {
+        if(q.size() == 0)
+           break;
+        s.push(q.front());
+        q.pop();
+      }
+      while(s.size() > 0) {
+        q2.push(s.top());
+        s.pop();
+      }
+    }
+  }
+  // Push elements from queue2 to queue
+  while(q2.size() > 0) {
+    q.push(q2.front());
+    q2.pop();
+  }
 }
 
 /**
