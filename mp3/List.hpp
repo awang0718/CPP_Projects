@@ -11,7 +11,8 @@
 template <typename T>
 typename List<T>::ListIterator List<T>::begin() const {
   // @TODO: graded in MP3.1
-  return List<T>::ListIterator(nullptr);
+  //return List<T>::ListIterator(nullptr);
+  return List<T>::ListIterator(head_);
 }
 
 /**
@@ -20,7 +21,8 @@ typename List<T>::ListIterator List<T>::begin() const {
 template <typename T>
 typename List<T>::ListIterator List<T>::end() const {
   // @TODO: graded in MP3.1
-  return List<T>::ListIterator(nullptr);
+  //return List<T>::ListIterator(nullptr);
+  return List<T>::ListIterator(tail_->next);
 }
 
 /**
@@ -30,6 +32,7 @@ typename List<T>::ListIterator List<T>::end() const {
 template <typename T>
 List<T>::~List() {
   /// @todo Graded in MP3.1
+  _destroy();
 }
 
 /**
@@ -39,6 +42,20 @@ List<T>::~List() {
 template <typename T>
 void List<T>::_destroy() {
   /// @todo Graded in MP3.1
+  if (head_ != NULL) {
+    ListNode* curr = head_;
+
+    while(curr->next != NULL) {
+      ListNode* temp = curr;  // Save node for deletion
+      curr = curr->next;      // Increment to next node
+      delete temp;
+    }
+    delete curr;  // Delete final node
+  }
+  head_ = NULL;
+  tail_ = NULL;
+
+  length_ = 0;
 }
 
 /**
@@ -50,6 +67,17 @@ void List<T>::_destroy() {
 template <typename T>
 void List<T>::insertFront(T const & ndata) {
   /// @todo Graded in MP3.1
+  ListNode* node = new ListNode(ndata);
+  node->next = head_;
+  node->prev = NULL;
+
+  if (length_ == 0)
+    tail_ = node;
+  else
+    head_->prev = node;
+  head_ = node;
+
+  length_++;
 }
 
 /**
@@ -61,6 +89,17 @@ void List<T>::insertFront(T const & ndata) {
 template <typename T>
 void List<T>::insertBack(const T & ndata) {
   /// @todo Graded in MP3.1
+  ListNode* node = new ListNode(ndata);
+  node->next = NULL;
+  node->prev = tail_;
+
+  if (length_ == 0)
+    head_ = node;
+  else
+    tail_->next = node;
+  tail_ = node;
+
+  length_++;
 }
 
 /**
@@ -85,6 +124,44 @@ void List<T>::reverse() {
 template <typename T>
 void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
   /// @todo Graded in MP3.1
+  if (endPoint != startPoint) {
+    ListNode* begin = startPoint->prev;  // Pointer to node before startPoint
+		ListNode* last = endPoint->next;     // Pointer to node after endPoint
+
+    // Reference node pointers
+    ListNode* start = startPoint;
+    ListNode* end = endPoint;
+
+    // Swap all next and prev pointers
+    ListNode* curr = startPoint;
+		while (curr != last) {
+			// Swap the curr->prev and curr->next pointers
+      swap(curr->next, curr->prev);
+			curr = curr->prev;   // Increment ot next node
+		}
+
+    // Realign the swap begin node with the end of the list
+    if (last != NULL) {
+      start->next = last;
+      last->prev = start;
+    } else {
+      start->next = NULL;
+      tail_ = start;
+    }
+    // Realign the swapped end node with the beginning of the list
+    if(begin != NULL) {
+      end->prev = begin;
+			begin->next = end;
+    }
+    else {
+      end->prev = NULL;
+			head_ = end;
+    }
+
+    // Swap the start and end pointers
+    endPoint = start;
+    startPoint = end;
+  }
 }
 
 /**
@@ -96,6 +173,19 @@ void List<T>::reverse(ListNode *& startPoint, ListNode *& endPoint) {
 template <typename T>
 void List<T>::reverseNth(int n) {
   /// @todo Graded in MP3.1
+  if (length_ > 0) {
+    ListNode* begin = head_, * beginn = begin;
+    while(begin != NULL) {
+      for(int i = 1; i < n; i++) {  // Locate node that is n away from begin
+        if (beginn->next != NULL)
+          beginn = beginn->next;
+      }
+      reverse(begin, beginn);   // reverse(begin, begin + n)
+      // Increment begin pointer to point to beginn node
+      begin = beginn->next;
+      beginn = begin;
+    }
+  }
 }
 
 /**
@@ -110,6 +200,32 @@ void List<T>::reverseNth(int n) {
 template <typename T>
 void List<T>::waterfall() {
   /// @todo Graded in MP3.1
+  if (length_ > 1) {
+     ListNode* curr = head_->next;	// Current node
+
+     while (curr != NULL) {
+	ListNode* next = curr->next;
+      	if (curr != tail_) {
+	   if (curr->prev != NULL) {	// Set curent node's prev's next pointer to point to the next node if possible
+		ListNode* currPrev = curr->prev;
+    	   	currPrev->next = curr->next;		
+	   }
+           if (curr->next != NULL) {	// Set curent node's next's pointer to point to the prev node if possible
+		ListNode* currNext = curr->next;
+           	currNext->prev = curr->prev;
+ 	   }    	   
+	   // Set the current node as as the tail node
+    	   tail_->next = curr;
+    	   curr->prev = tail_;
+	   tail_ = curr;
+    	   curr->next = NULL; 	   
+        }
+	// Update to the next node if possible
+	if (next == NULL || next->next == NULL)
+	   break; 
+	curr = next->next;
+     }
+  }
 }
 
 /**
