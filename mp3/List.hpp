@@ -201,30 +201,30 @@ template <typename T>
 void List<T>::waterfall() {
   /// @todo Graded in MP3.1
   if (length_ > 1) {
-     ListNode* curr = head_->next;	// Current node
+    ListNode* curr = head_->next;	// Current node
 
-     while (curr != NULL) {
-	ListNode* next = curr->next;
-      	if (curr != tail_) {
-	   if (curr->prev != NULL) {	// Set curent node's prev's next pointer to point to the next node if possible
-		ListNode* currPrev = curr->prev;
-    	   	currPrev->next = curr->next;		
-	   }
-           if (curr->next != NULL) {	// Set curent node's next's pointer to point to the prev node if possible
-		ListNode* currNext = curr->next;
-           	currNext->prev = curr->prev;
- 	   }    	   
-	   // Set the current node as as the tail node
-    	   tail_->next = curr;
-    	   curr->prev = tail_;
-	   tail_ = curr;
-    	   curr->next = NULL; 	   
+    while (curr != NULL) {
+      ListNode* next = curr->next;
+      if (curr != tail_) {
+        if (curr->prev != NULL) {	// Set curent node's prev's next pointer to point to the next node if possible
+          ListNode* currPrev = curr->prev;
+          currPrev->next = curr->next;
         }
-	// Update to the next node if possible
-	if (next == NULL || next->next == NULL)
-	   break; 
-	curr = next->next;
-     }
+        if (curr->next != NULL) {	// Set curent node's next's prev pointer to point to the prev node if possible
+          ListNode* currNext = curr->next;
+          currNext->prev = curr->prev;
+        }
+        // Set the current node as as the tail node
+        tail_->next = curr;
+        curr->prev = tail_;
+        tail_ = curr;
+        curr->next = NULL;
+      }
+    	// Update to the next node if possible
+    	if (next == NULL || next->next == NULL)
+    	   break;
+    	curr = next->next;
+    }
   }
 }
 
@@ -286,7 +286,23 @@ List<T> List<T>::split(int splitPoint) {
 template <typename T>
 typename List<T>::ListNode * List<T>::split(ListNode * start, int splitPoint) {
   /// @todo Graded in MP3.2
-  return NULL;
+  ListNode* ptr = new ListNode();  // Create a node whose next pointer points to start
+  ptr->next = start;
+
+  //Increment the node pointer until it reaches the node right before the split point
+  for (int i = 0; i < splitPoint; i++)
+    ptr = ptr->next;
+
+  // If start list is null, return the list
+  if (ptr == NULL)
+		return start;
+  // Create a pointer to the starting node of the list that was split off
+	ListNode * ptr2 = ptr->next;
+	if (ptr2 != NULL) {
+    ptr->next = NULL;
+		ptr2->prev = NULL;
+	}
+	return ptr2;
 }
 
 /**
@@ -326,8 +342,54 @@ void List<T>::mergeWith(List<T> & otherList) {
  */
 template <typename T>
 typename List<T>::ListNode * List<T>::merge(ListNode * first, ListNode* second) {
-  /// @todo Graded in MP3.2
-  return NULL;
+  // @todo Graded in MP3.2
+	ListNode *merged = NULL, *tail = NULL;
+  ListNode *next1, *next2;
+
+	while(first != NULL || second != NULL) {
+	  if(first == NULL)
+		  next1 = NULL;
+	  else
+		  next1 = first->next;
+
+	  if(second == NULL)
+		  next2 = NULL;
+	  else
+		  next2 = second->next;
+
+		// Add 1st node from first list if it is smaller than 1st node on second list or if the second list pointer is null
+		if (((first != NULL && second != NULL) && first->data < second->data) ||
+        (!(first != NULL && second != NULL) && first != NULL) ) {
+			first->next = NULL;
+			if (merged != NULL){
+				first->prev = tail;
+				tail->next = first;
+			}
+			else {
+				first->prev = NULL;
+				merged = first;
+			}
+			tail = first;
+
+			first = next1;
+		}
+		else { // Add 1st node from second list if it is smaller than 1st node on first list or if the first list pointer is null
+			second->next = NULL;
+			if (merged != NULL){
+				second->prev = tail;
+				tail->next = second;
+			}
+			else {
+				second->prev = NULL;
+				merged = second;
+			}
+			tail = second;
+
+			second = next2;
+		}
+	}
+  return merged;
+  // return NULL;
 }
 
 /**
@@ -354,6 +416,16 @@ void List<T>::sort() {
  */
 template <typename T>
 typename List<T>::ListNode* List<T>::mergesort(ListNode * start, int chainLength) {
-  /// @todo Graded in MP3.2
-  return NULL;
+  /// Return pointer to singular or NULL node
+  if (start == NULL || chainLength == 1)
+    return start;
+
+  // Split list into 2 halfs
+  ListNode* start2 = split(start, chainLength / 2);
+  // Sort 1st half of list
+	start = mergesort(start, chainLength / 2);
+  // Sort 2nd half of list
+  start2 = mergesort(start2, chainLength - chainLength / 2);
+  // Merge both halves
+  return merge(start, start2);
 }
