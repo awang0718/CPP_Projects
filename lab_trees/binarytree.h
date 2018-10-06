@@ -89,7 +89,7 @@ class BinaryTree
         /**
          * @return The root of the binary tree
          */
-        Node* getRoot() const;  
+        Node* getRoot() const;
 
         /**
          * This lab deals with the following six helper functions:
@@ -173,6 +173,10 @@ class BinaryTree
          * Look at the private helpers for height and printLeftToRight
          *  as examples.
          */
+	void mirror(Node* subRoot);
+	bool isOrderedRecursive(Node* subRoot, Node* left, Node* right) const;
+  void getPaths(const Node* subRoot, vector<vector<T> > &paths,vector<int> record) const;
+  int sumDistances(Node * subRoot, int height) const;
 
         /**
          * Private helper function for the public height function.

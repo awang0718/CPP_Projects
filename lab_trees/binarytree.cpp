@@ -75,13 +75,28 @@ void BinaryTree<T>::printLeftToRight(const Node* subRoot) const
  * Flips the tree over a vertical axis, modifying the tree itself
  *  (not creating a flipped copy).
  */
-    template <typename T>
+template <typename T>
 void BinaryTree<T>::mirror()
 {
-    //your code here
+  if(height() <= 0)
+     return;
+  mirror(root);
 }
 
+template <typename T>
+void BinaryTree<T>::mirror(Node* subRoot) {
+  if(subRoot == NULL) return;
 
+  if(subRoot->left != NULL)
+  	mirror(subRoot->left);
+  if(subRoot->right != NULL)
+  	mirror(subRoot->right);
+
+  Node* temp = subRoot->left;
+  subRoot->left = subRoot->right;
+  subRoot->right = temp;
+
+}
 /**
  * isOrdered() function iterative version
  * @return True if an in-order traversal of the tree would produce a
@@ -91,8 +106,34 @@ void BinaryTree<T>::mirror()
 template <typename T>
 bool BinaryTree<T>::isOrderedIterative() const
 {
-    // your code here
-    return false;
+  if(root == NULL) return true;
+
+  vector<Node*> S;
+  Node* curr = root;
+  T curr_elem, pre_elem;
+  bool comp1 = true;
+
+  while(curr != NULL || S.size() != 0){
+    if(curr != NULL){
+      S.push_back(curr);
+      curr = curr->left;
+    }
+    else{
+      curr = S.back();    // Set current element to back of vector
+      curr_elem = curr->elem; // Update current element
+
+      if(comp1 == false)
+        if(curr_elem <= pre_elem)
+          return false;
+      comp1 = false;
+
+      pre_elem = curr_elem; // Update previous element
+      S.pop_back();         // Remove back-most element
+
+      curr = curr->right;
+    }
+  }
+  return true;
 }
 
 /**
@@ -104,8 +145,23 @@ bool BinaryTree<T>::isOrderedIterative() const
 template <typename T>
 bool BinaryTree<T>::isOrderedRecursive() const
 {
-    // your code here
-    return false;
+  return isOrderedRecursive(root, NULL, NULL);
+}
+
+template <typename T>
+bool BinaryTree<T>::isOrderedRecursive(Node* subRoot, Node* left, Node* right) const
+{
+  // Base case on current node
+  if(subRoot == NULL)
+    return true;
+  if (left != NULL)
+    if (subRoot->elem < left->elem) return false;
+  if (right != NULL)
+    if(subRoot->elem > right->elem) return false;
+
+  // Recursive call to left and right nodes
+  return isOrderedRecursive(subRoot->left, left, subRoot)
+      && isOrderedRecursive(subRoot->right, subRoot, right);
 }
 
 
@@ -120,9 +176,27 @@ bool BinaryTree<T>::isOrderedRecursive() const
 template <typename T>
 void BinaryTree<T>::getPaths(vector<vector<T> > &paths) const
 {
-    // your code here
+  vector<int> path{};
+  getPaths(root, paths, path);
 }
 
+template <typename T>
+void BinaryTree<T>::getPaths(const Node* subRoot, vector<vector<T> > &paths,vector<int> path) const
+{
+  // Base case: Return if node is null
+  if (subRoot == NULL) return;
+  // base case: Push node's elem to a new path in the list of paths if that node is a leaf node
+  if (subRoot->left == NULL && subRoot->right == NULL) {
+    paths.push_back(path);
+    paths[paths.size()-1].push_back(subRoot->elem);
+    return;
+  }
+
+  // Recursive case: Push node's elem to current path and get path of right and left node
+  path.push_back(subRoot->elem);
+  getPaths(subRoot->left, paths, path);
+  getPaths(subRoot->right, paths, path);
+}
 
 /**
  * Each node in a tree has a distance from the root node - the depth of that
@@ -135,7 +209,12 @@ void BinaryTree<T>::getPaths(vector<vector<T> > &paths) const
 template <typename T>
 int BinaryTree<T>::sumDistances() const
 {
-    // your code here
-    return -1;
+    return sumDistances(root, 0);
+    //return -1;
 }
 
+template <typename T>
+int BinaryTree<T>::sumDistances(Node * subRoot, int height) const {
+  if (subRoot == NULL) return 0;
+  return height + sumDistances(subRoot->left, height + 1) + sumDistances(subRoot->right, height + 1);
+}
