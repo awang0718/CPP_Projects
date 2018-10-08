@@ -93,10 +93,10 @@ void List<T>::insertBack(const T & ndata) {
   node->next = NULL;
   node->prev = tail_;
 
-  if (length_ == 0)
-    head_ = node;
-  else
+  if (length_ > 0)
     tail_->next = node;
+  else
+    head_ = node;
   tail_ = node;
 
   length_++;
@@ -420,7 +420,7 @@ typename List<T>::ListNode* List<T>::mergesort(ListNode * start, int chainLength
   if (start == NULL || chainLength == 1)
     return start;
 
-  // Split list into 2 halfs
+  // Split list into 2 halves
   ListNode* start2 = split(start, chainLength / 2);
   // Sort 1st half of list
 	start = mergesort(start, chainLength / 2);
