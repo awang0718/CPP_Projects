@@ -27,6 +27,8 @@ BFS::BFS(const PNG & png, const Point & start, double tolerance) {
   png_ = png;
   start_ = start;
   tolerance_ = tolerance;
+
+  points.push(start_);
 }
 
 /**
@@ -60,6 +62,7 @@ Point BFS::pop() {
   /** @todo [Part 1] */
   //return Point(0, 0);
   // if (!points.empty())
+  // cout << "popped" << "\n";
     Point front = points.front();
     points.pop();
     return front;

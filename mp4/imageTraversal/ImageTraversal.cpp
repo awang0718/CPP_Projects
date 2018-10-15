@@ -36,7 +36,7 @@ double ImageTraversal::calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2
 ImageTraversal::Iterator::Iterator() {
   /** @todo [Part 1] */
   traverse = NULL;
-  endOfTrav = false;
+  endOfTrav = true;
 }
 
 ImageTraversal::Iterator::Iterator(PNG png, Point start, double tolerance, ImageTraversal* Traverse) {
@@ -51,15 +51,6 @@ ImageTraversal::Iterator::Iterator(PNG png, Point start, double tolerance, Image
     visited.push_back(false);
   endOfTrav = false;
 
-  // Determine if current iterator can be visited
-  // if (!visitable(start_))
-  //   endOfTrav = true;
-  // else {
-  //   endOfTrav = false;
-  //   visited[start_.x + png_.width() * start_.y] = true;
-  //   points.push_back(start_);
-  // }
-
   visited[start_.x + png_.width() * start_.y] = true;
   points.push_back(start_);
 }
@@ -72,20 +63,18 @@ ImageTraversal::Iterator::Iterator(PNG png, Point start, double tolerance, Image
  */
 ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   /** @todo [Part 1] */
-  if (visitable(Point(start_.x + 1, start_.y)) /*&& !checkVisited(Point(start_.x + 1, start_.y))*/) // Add right pixel to traveral, if possible
-    traverse->add(Point(start_.x + 1, start_.y));
-  if (visitable(Point(start_.x, start_.y + 1)) /*&& !checkVisited(Point(start_.x, start_.y + 1))*/)  // Add bottom pixel to traveral, if possible
-    traverse->add(Point(start_.x, start_.y + 1));
-  if (visitable(Point(start_.x - 1, start_.y)) /*&& !checkVisited(Point(start_.x - 1, start_.y))*/) // Add left pixel to traveral, if possible
-    traverse->add(Point(start_.x - 1, start_.y));
-  if (visitable(Point(start_.x, start_.y - 1)) /*&& !checkVisited(Point(start_.x, start_.y - 1))*/)  // Add upper pixel to traveral, if possible
-    traverse->add(Point(start_.x, start_.y - 1));
-
-  if (traverse->empty() == true) {  // If traversal is empty, return current iterator
-    endOfTrav = true;
-    traverse = NULL;
-    return *this;
-  }
+  if (start_.x < png_.width() - 1)
+    if (visitable(Point(start_.x + 1, start_.y))) // Add right pixel to traveral, if possible
+      traverse->add(Point(start_.x + 1, start_.y));
+  if (start_.y < png_.height() - 1)
+    if (visitable(Point(start_.x, start_.y + 1)))  // Add bottom pixel to traveral, if possible
+      traverse->add(Point(start_.x, start_.y + 1));
+  if (start_.x > 0)
+    if (visitable(Point(start_.x - 1, start_.y))) // Add left pixel to traveral, if possible
+      traverse->add(Point(start_.x - 1, start_.y));
+  if (start_.y > 0)
+    if (visitable(Point(start_.x, start_.y - 1)))  // Add upper pixel to traveral, if possible
+      traverse->add(Point(start_.x, start_.y - 1));
 
   //Locate next available traversal iterator
   Point nextPoint = traverse->pop();
@@ -100,7 +89,6 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   traverse->add(nextPoint);
 
   start_ = nextPoint; // Set the new starting point
-  //start_ = traverse->peek();
   visited[start_.x + png_.width() * start_.y] = true; // Mark next iterator as visited
   points.push_back(start_); // Push new starting point to list of visited points
 
@@ -143,16 +131,6 @@ bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other)
 
 
 bool ImageTraversal::Iterator::visitable(Point pixel) {
-  // if (calculateDelta(png_.getPixel(initial.x, initial.y), png_.getPixel(pixel.x, pixel.y)) >= tolerance_) return false; // Pixel is not within tolerance
-  // if (pixel.x >= png_.width() || pixel.y >= png_.height()) return false;  // Pixel is out-of-bounds
-  // return true;
-
-  cout << "Calculate Delta: ";
-  cout << calculateDelta(png_.getPixel(initial.x, initial.y), png_.getPixel(pixel.x, pixel.y));
-  cout << "\n";
-  cout << "Tolerance: ";
-  cout << tolerance_ << endl;
-
   if (calculateDelta(png_.getPixel(initial.x, initial.y), png_.getPixel(pixel.x, pixel.y)) < tolerance_ && // Pixel is within tolerance
       pixel.x < png_.width() && pixel.y < png_.height()) return true;  // Pixel is not out-of-bounds
   return false;

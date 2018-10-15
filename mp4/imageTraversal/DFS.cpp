@@ -12,6 +12,8 @@
 #include "ImageTraversal.h"
 #include "DFS.h"
 
+using namespace std;
+
 
 /**
  * Initializes a depth-first ImageTraversal on a given `png` image,
@@ -27,6 +29,8 @@ DFS::DFS(const PNG & png, const Point & start, double tolerance) {
   png_ = png;
   start_ = start;
   tolerance_ = tolerance;
+
+  points.push(start_);
 }
 
 /**
@@ -59,12 +63,12 @@ void DFS::add(const Point & point) {
 Point DFS::pop() {
   /** @todo [Part 1] */
   // return Point(0, 0);
-  // if (!points.empty())
-    Point top = points.top();
+  if (!points.empty()) {
+    Point topp = points.top();
     points.pop();
-    return top;
-  // }
-  // return NULL;
+    return topp;
+  }
+  return Point();
 }
 
 /**
