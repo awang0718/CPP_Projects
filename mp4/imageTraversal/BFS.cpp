@@ -34,7 +34,7 @@ BFS::BFS(const PNG & png, const Point & start, double tolerance) {
  */
 ImageTraversal::Iterator BFS::begin() {
   /** @todo [Part 1] */
-  return ImageTraversal::Iterator();
+  return ImageTraversal::Iterator(png_, start_, tolerance_, this);
 }
 
 /**
@@ -59,9 +59,12 @@ void BFS::add(const Point & point) {
 Point BFS::pop() {
   /** @todo [Part 1] */
   //return Point(0, 0);
-  Point front = points.front();
-  list_.pop();
-  return front;
+  // if (!points.empty())
+    Point front = points.front();
+    points.pop();
+    return front;
+  // }
+  // return NULL;
 }
 
 /**

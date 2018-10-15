@@ -8,6 +8,9 @@
 #include "../cs225/PNG.h"
 #include "../Point.h"
 
+using namespace std;
+#include <vector>
+
 using namespace cs225;
 
 /**
@@ -29,6 +32,7 @@ public:
   class Iterator : std::iterator<std::forward_iterator_tag, Point> {
   public:
     Iterator();
+    Iterator(PNG png, Point start, double tolerance, ImageTraversal* Traverse);
 
     Iterator & operator++();
     Point operator*();
@@ -36,13 +40,15 @@ public:
 
     /** @todo [Part 1] */
     /** add member functions if neccesary*/
-    bool endOfList;
-    bool visitable(Point point);
+    bool endOfTrav;
+    bool visitable(Point pixel);
+    bool checkVisited(Point pixel);
 
   private:
     /** @todo [Part 1] */
     /** add private members here if neccesary*/
     ImageTraversal* traverse;
+    Point initial;
 
     vector<Point> points;
     vector<bool> visited;
@@ -88,3 +94,21 @@ public:
 private:
   static double calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2);
 };
+
+// void Visited() {
+//   bool unVisited = true;
+//   Point next = traverse->peek();
+//   while (!traverse->empty()) {
+//     for (unsigned i = 0; i < points.size(); i++){
+//       if(next == points[i]) {
+//         traverse->pop();
+//         unVisited = false;
+//         break;
+//       }
+//     }
+//     if(unVisited) {
+//       points.push_back(next);
+//       return;
+//     }
+//   }
+// };
