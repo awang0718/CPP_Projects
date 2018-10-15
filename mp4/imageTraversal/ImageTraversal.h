@@ -51,7 +51,6 @@ public:
     Point initial;
 
     vector<Point> points;
-    vector<bool> visited;
 
     PNG png_;
     Point start_;
