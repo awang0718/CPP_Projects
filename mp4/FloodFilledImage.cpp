@@ -61,11 +61,10 @@ Animation FloodFilledImage::animate(unsigned frameInterval) const {
 
     unsigned frame = 0;	// Set start frame
     for (ImageTraversal::Iterator itr = traverse[i]->begin(); itr != traverse[i]->end(); ++itr, frame++) {
-      if (frame % frameInterval == 0)
-        animation.addFrame(*png_);	// Add frame to png
+      if (frame % frameInterval == 0) animation.addFrame(*png_);	// Add frame to png
 
       HSLAPixel newPix = colorPick[i]->getColor((*itr).x, (*itr).y);
-      HSLAPixel & oldPix = png_->getPixel((*itr).x, (*itr).y);  
+      HSLAPixel & oldPix = png_->getPixel((*itr).x, (*itr).y);
       // Copy new pixel to old pixel
       oldPix.h = newPix.h;
       oldPix.s = newPix.s;
