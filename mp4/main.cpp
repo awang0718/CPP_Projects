@@ -37,12 +37,12 @@ int main() {
   // SolidColorPicker yellow(color); //  RainbowColorPicker rainbow2(0.05);
   // image.addFloodFill( bfs3, yellow );
 
-  BFS bfs4(png, Point(90, 297), 0.2);
+  BFS bfs4(png, Point(90, 1), 0.2);
   MyColorPicker blue(png, 180);
   image.addFloodFill( bfs4, blue );
 
   BFS bfs5(png, Point(90, 140), 0.05);
-  MyColorPicker blue2(png, 95);
+  MyColorPicker blue2(png, 180);
   image.addFloodFill( bfs5, blue2 );
 
   Animation animation = image.animate(1000);
