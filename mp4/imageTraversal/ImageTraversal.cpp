@@ -106,20 +106,20 @@ Point ImageTraversal::Iterator::operator*() {
  */
 bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) {
   /** @todo [Part 1] */
-  return endOfTrav != other.endOfTrav;
+  // return endOfTrav != other.endOfTrav;
 
-  // bool thisEmpty = false;
-  // bool otherEmpty = false;
-  //
-  // if (traverse == NULL) { thisEmpty = true; }
-  // if (other.traverse == NULL) { otherEmpty = true; }
-  //
-  // if (!thisEmpty)  { thisEmpty = traverse->empty(); }
-  // if (!otherEmpty) { otherEmpty = other.traverse->empty(); }
-  //
-  // if (thisEmpty && otherEmpty) return false; // both empty then the traversals are equal, return true
-  // else if ((!thisEmpty)&&(!otherEmpty)) return (traverse != other.traverse); //both not empty then compare the traversals
-  // else return true; // one is empty while the other is not, return true
+  bool thisEmpty = false;
+  bool otherEmpty = false;
+
+  if (traverse == NULL) { thisEmpty = true; }
+  if (other.traverse == NULL) { otherEmpty = true; }
+
+  if (!thisEmpty)  { thisEmpty = traverse->empty(); }
+  if (!otherEmpty) { otherEmpty = other.traverse->empty(); }
+
+  if (thisEmpty && otherEmpty) return false; // both empty then the traversals are equal, return true
+  else if ((!thisEmpty)&&(!otherEmpty)) return (traverse != other.traverse); //both not empty then compare the traversals
+  else return true; // one is empty while the other is not, return true
 }
 
 

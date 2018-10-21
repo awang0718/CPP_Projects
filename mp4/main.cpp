@@ -21,12 +21,29 @@ int main() {
   // - The code provided below produces the `myFloodFill.png` file you must
   //   submit Part 3 of this assignment -- uncomment it when you're ready.
 
-  PNG png;       png.readFromFile("tests/myImage.png");
-
+  PNG png;       png.readFromFile("triforce.png");
   FloodFilledImage image(png);
-  DFS dfs(png, Point(600, 400), 0.5);
-  RainbowColorPicker rainbow(0.05);
-  image.addFloodFill( dfs, rainbow );
+
+  BFS bfs(png, Point(90, 297), 0.05);
+  MyColorPicker green(png, 95);
+  image.addFloodFill( bfs, green );
+
+  BFS bfs2(png, Point(90, 140), 0.05);
+  MyColorPicker green2(png, 95);
+  image.addFloodFill( bfs2, green2 );
+
+  // BFS bfs3(png, Point(90, 80), 0.05);
+  // HSLAPixel color(43, 1.0, 0.85);
+  // SolidColorPicker yellow(color); //  RainbowColorPicker rainbow2(0.05);
+  // image.addFloodFill( bfs3, yellow );
+
+  BFS bfs4(png, Point(90, 297), 0.2);
+  MyColorPicker blue(png, 180);
+  image.addFloodFill( bfs4, blue );
+
+  BFS bfs5(png, Point(90, 140), 0.05);
+  MyColorPicker blue2(png, 95);
+  image.addFloodFill( bfs5, blue2 );
 
   Animation animation = image.animate(1000);
 

@@ -56,7 +56,6 @@ void FloodFilledImage::addFloodFill(ImageTraversal & traversal, ColorPicker & co
 Animation FloodFilledImage::animate(unsigned frameInterval) const {
   Animation animation;
   /** @todo [Part 2] */
-  // animation.addFrame(*png_);
   for (unsigned i = 0; i < traverse.size(); i++) {
 
     unsigned frame = 0;	// Set start frame
@@ -71,7 +70,6 @@ Animation FloodFilledImage::animate(unsigned frameInterval) const {
       oldPix.l = newPix.l;
       oldPix.a = newPix.a;
     }
-
     animation.addFrame(*png_);
   }
 

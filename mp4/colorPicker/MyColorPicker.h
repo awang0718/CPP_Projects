@@ -12,9 +12,10 @@ using namespace cs225;
  */
 class MyColorPicker : public ColorPicker {
 public:
-  MyColorPicker(PNG png);
+  MyColorPicker(PNG png, double hue);
   HSLAPixel getColor(unsigned x, unsigned y);
 
 private:
   PNG png_;
+  double hue_;
 };
