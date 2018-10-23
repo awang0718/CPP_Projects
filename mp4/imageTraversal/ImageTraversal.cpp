@@ -47,6 +47,10 @@ ImageTraversal::Iterator::Iterator(PNG png, Point start, double tolerance, Image
 
   initial = start;
   points.push_back(start_);
+
+  for (unsigned i = 0; i < png_.width() * png_.height(); i++)
+    visited.push_back(false);
+  visited[start_.x + start_.y * png_.width()] = true;
 }
 
 
@@ -84,6 +88,7 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   traverse->add(nextPoint);
   start_ = nextPoint; // Set the new starting point
   points.push_back(start_); // Push new starting point to list of visited points
+  visited[start_.x + start_.y * png_.width()] = true;
 
   return *this;
 }
@@ -130,10 +135,12 @@ bool ImageTraversal::Iterator::visitable(Point pixel) {
 }
 
 bool ImageTraversal::Iterator::checkVisited(Point pixel) {
-  if (points.empty())
-    return false;
-  for (unsigned i = 0; i < points.size(); i++)
-    if(pixel == points[i])
-      return true;
-  return false;
+  // if (points.empty())
+  //   return false;
+  // for (unsigned i = 0; i < points.size(); i++)
+  //   if(pixel == points[i])
+  //     return true;
+  // return false;
+
+  return visited[pixel.x + pixel.y * png_.width()];
 }
