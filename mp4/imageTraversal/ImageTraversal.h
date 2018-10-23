@@ -40,7 +40,6 @@ public:
 
     /** @todo [Part 1] */
     /** add member functions if neccesary*/
-    bool endOfTrav;
     bool visitable(Point pixel);
     bool checkVisited(Point pixel);
 

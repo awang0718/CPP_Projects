@@ -36,7 +36,6 @@ double ImageTraversal::calculateDelta(const HSLAPixel & p1, const HSLAPixel & p2
 ImageTraversal::Iterator::Iterator() {
   /** @todo [Part 1] */
   traverse = NULL;
-  endOfTrav = true;
 }
 
 ImageTraversal::Iterator::Iterator(PNG png, Point start, double tolerance, ImageTraversal* Traverse) {
@@ -78,7 +77,6 @@ ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
   Point nextPoint = traverse->pop();
   while (checkVisited(nextPoint)) { // Make sure pixel has not already been visited   //while (visited[nextPoint.x + png_.width() * nextPoint.y])
     if (traverse->empty() == true) {  // If traversal is empty, return current iterator
-      endOfTrav = true;
       traverse = NULL;
       return *this;
     }
@@ -111,8 +109,6 @@ Point ImageTraversal::Iterator::operator*() {
  */
 bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) {
   /** @todo [Part 1] */
-  // return endOfTrav != other.endOfTrav;
-
   bool thisEmpty = false;
   bool otherEmpty = false;
 
