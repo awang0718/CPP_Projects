@@ -259,6 +259,10 @@ class KDTree
     /**
      * @todo Add your helper functions here.
      */
+    KDTreeNode* buildTree(int begin, int end, int dim, vector<Point<Dim>>& points);
+    //void quickSelect(int dim, int begin, int end, int median, vector<Point<Dim>>& points);
+    Point<Dim> quickSelect(int dim, int begin, int end, int median, vector<Point<Dim>>& points);
+    int partition(int dim, int begin, int end, int pivotIndex, vector<Point<Dim>>& points);
 };
 
 #include "kdtree.hpp"

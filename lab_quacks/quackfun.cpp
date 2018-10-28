@@ -78,7 +78,7 @@ bool isBalanced(queue<char> input)
  * one and increase for each subsequent block.
  * @param q A queue of items to be scrambled
  *
- * @note Any "leftover" numbers should be handled as if their block was
+ * @note Any "leftover" numbers should be handled as if their block was 
  *  complete.
  * @note We are using the Standard Template Library (STL) queue in this
  *  problem. Its pop function works a bit differently from the stack we

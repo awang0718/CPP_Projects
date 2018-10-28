@@ -7,7 +7,9 @@
  * @author Matt Joras
  * @date Winter 2013
  */
+#include <iostream>
 
+using namespace std;
 using std::vector;
 
 /**
@@ -48,7 +50,14 @@ V BTree<K, V>::find(const BTreeNode* subroot, const K& key) const
      * anywhere in the tree and return the default V.
      */
 
-    return V();
+    // Return value if key is in the node
+    if (first_larger_idx < subroot->elements.size() && subroot->elements.size() > 0) {
+      if (key == subroot->elements[first_larger_idx].key)
+	     return subroot->elements[first_larger_idx].value;
+    }
+
+    if (subroot->is_leaf) return V();
+    else return find(subroot->children[first_larger_idx], key);
 }
 
 /**
@@ -139,13 +148,42 @@ void BTree<K, V>::split_child(BTreeNode* parent, size_t child_idx)
     auto child_itr = parent->children.begin() + child_idx + 1;
     /* Iterator for where we want to insert the new element. */
     auto elem_itr = parent->elements.begin() + child_idx;
-    /* Iterator for the middle element. */
-    auto mid_elem_itr = child->elements.begin() + mid_elem_idx;
     /* Iterator for the middle child. */
     auto mid_child_itr = child->children.begin() + mid_child_idx;
-
+    /* Iterator for the middle element. */
+    auto mid_elem_itr = child->elements.begin() + mid_elem_idx;
 
     /* TODO Your code goes here! */
+    BTreeNode* childClone = new BTreeNode(*child);
+    for (size_t i = 0; i < child->children.size(); i++) {
+      childClone->children.push_back(child->children[i]);
+      //childClone->children[i] = new BTreeNode(*child->children[i]);
+    }
+    /* Iterator for the middle child. */
+    auto mid_child_itrClone = childClone->children.begin() + mid_child_idx;
+    /* Iterator for the middle element. */
+    auto mid_elem_itrClone = childClone->elements.begin() + mid_elem_idx;
+
+    // Insert new right child
+    parent->children.insert(child_itr, new_right);
+    // Insert new right element, which is the middle element of the child
+    parent->elements.insert(elem_itr, child->elements[mid_elem_idx]);
+
+    //cout << "hello world 1" << endl;
+    // Set the new left child's children
+    if(!new_left->is_leaf)
+      new_left->children.assign(child->children.begin(), mid_child_itr);
+	//  cout << "hello world 2" << endl;
+    // Set the new left child's elements
+    new_left->elements.assign(child->elements.begin(), mid_elem_itr);
+	//  cout << "hello world 3" << endl;
+    // Set the new right child's children
+    if(!new_left->is_leaf)
+      new_right->children.assign(mid_child_itrClone, childClone->children.end());
+	//  cout << "hello world 4" << endl;
+    // Set the new right child's elements
+    new_right->elements.assign(mid_elem_itrClone + 1, childClone->elements.end());
+    //cout << "hello world 5" << endl;
 }
 
 /**
@@ -170,4 +208,20 @@ void BTree<K, V>::insert(BTreeNode* subroot, const DataPair& pair)
     size_t first_larger_idx = insertion_idx(subroot->elements, pair);
 
     /* TODO Your code goes here! */
+
+	//cout << "hello world 0" << endl;
+    // Do nothing if datapair already exists
+    if (first_larger_idx < subroot->elements.size() && subroot->elements.size() > 0)
+      if (subroot->elements[first_larger_idx] == pair) return;
+
+    if (subroot->is_leaf) // Insert datapair at proper index
+      subroot->elements.insert(subroot->elements.begin() + first_larger_idx, pair);
+    else {
+      // Insert datapair at proper child
+  	insert(subroot->children[first_larger_idx], pair);
+      // Split the child if overflow occurs
+      if(subroot->children[first_larger_idx]->elements.size() >= order)
+  	split_child(subroot, first_larger_idx);
+    }
+    return;
 }

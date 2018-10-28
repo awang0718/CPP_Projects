@@ -5,9 +5,17 @@
 
 #include <utility>
 #include <algorithm>
+#include <math.h>
+#include <iostream>
 
 using namespace std;
 
+/**
+* This function returns true if the value of the first point at the dimension curDim
+* is less than the value of second point at the dimension curDim. If the first point
+* at the dimension curDim is equal to the value of second point at the dimension curDim,
+* then refer to the < operator.
+**/
 template <int Dim>
 bool KDTree<Dim>::smallerDimVal(const Point<Dim>& first,
                                 const Point<Dim>& second, int curDim) const
@@ -15,10 +23,17 @@ bool KDTree<Dim>::smallerDimVal(const Point<Dim>& first,
     /**
      * @todo Implement this function!
      */
-
+    if (first[curDim] == second[curDim]) return first < second; // If values at curDim are equal, refer to < operator
+    else if (first[curDim] < second[curDim]) return true;
+    else if (first[curDim] > second[curDim]) return false;
     return false;
 }
 
+/**
+*  This function returns true if the distance between potential and target is smaller
+*  that the distance between target and currentBest. If the distances are equal,
+*  then refer to the < operator.
+**/
 template <int Dim>
 bool KDTree<Dim>::shouldReplace(const Point<Dim>& target,
                                 const Point<Dim>& currentBest,
@@ -27,18 +42,42 @@ bool KDTree<Dim>::shouldReplace(const Point<Dim>& target,
     /**
      * @todo Implement this function!
      */
+    // Distance between target and potential
+    double targetDist = 0;
+    for (int i = 0; i < Dim; i++)
+      targetDist += pow((target[i] - potential[i]), 2);
 
-     return false;
+    // Distance between target and currentBest
+    double currentDist = 0;
+    for (int j = 0; j < Dim; j++)
+      currentDist += pow((target[j] - currentBest[j]), 2);
+
+    if (targetDist == currentDist) return potential < currentBest; // If distances are equal, refer to < operator
+    else if (targetDist < currentDist) return true;
+    else if (targetDist > currentDist) return false;
+    return false;
 }
 
+/*
+*   KDTree constructor
+*/
 template <int Dim>
 KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
 {
     /**
      * @todo Implement this function!
      */
+    vector<Point<Dim>> points;
+    for (size_t i = 0; i < newPoints.size(); i++)
+      points.push_back(newPoints[i]);
+
+    size = points.size();
+    root = buildTree(0, newPoints.size() - 1, 0, points);
 }
 
+/*
+*   KDTree copy constructor
+*/
 template <int Dim>
 KDTree<Dim>::KDTree(const KDTree<Dim>& other) {
   /**
@@ -46,6 +85,9 @@ KDTree<Dim>::KDTree(const KDTree<Dim>& other) {
    */
 }
 
+/*
+*   KDTree = operator
+*/
 template <int Dim>
 const KDTree<Dim>& KDTree<Dim>::operator=(const KDTree<Dim>& rhs) {
   /**
@@ -55,12 +97,99 @@ const KDTree<Dim>& KDTree<Dim>::operator=(const KDTree<Dim>& rhs) {
   return *this;
 }
 
+/*
+*   KDTree destructor
+*/
 template <int Dim>
 KDTree<Dim>::~KDTree() {
   /**
    * @todo Implement this function!
    */
+
 }
+
+/*
+*   This function will build the vector that will represent the KDTree using "Binary Sort"
+*/
+// template <int Dim>
+// void KDTree<Dim>::buildTree(int begin, int end, int dim, vector<Point<Dim>>& points)
+// {
+//     if (begin >= end) return; // If vector to build is null, return.
+//     int median = (begin + end) / 2;
+//     quickSelect(dim, begin, end, median, points); //Ensure the median point is at the median index
+//     // Recursively contruct the first and second halves of the vector
+//     buildTree(begin, median - 1, (dim + 1) % Dim, points);
+//     buildTree(median + 1, end, (dim + 1) % Dim, points);
+// }
+
+/*
+*   This function will sort the vector that will represent the KDTree using "Binary Sort."
+*   During the sorting process, it will recursively build the K-d Tree.
+*/
+template <int Dim>
+typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::buildTree(int dim, int begin, int end, vector<Point<Dim>>& points)
+{
+    if (begin >= end) return NULL; // If vector to build is null, return.
+    int median = (begin + end) / 2;
+    Point<Dim> KDPoint = quickSelect(dim, begin, end, median, points); //Ensure the median point is at the median index
+    KDTreeNode* KDNode = new KDTreeNode(KDPoint);
+    // Recursively contruct the first and second halves of the vector
+    KDTreeNode* left = buildTree((dim + 1) % Dim, begin, median - 1, points);
+    KDTreeNode* right = buildTree((dim + 1) % Dim, median + 1, end, points);
+
+    return KDNode;
+}
+
+/*
+*   This function will build the vector that will represent the KDTree using "Binary Sort"
+*/
+// template <int Dim>
+// void KDTree<Dim>::quickSelect(int dim, int begin, int end, int median, vector<Point<Dim>>& points)
+// {
+//     if (begin >= end) return; // If vector to build is null, return.
+//     int pivotIndex = (begin + end) / 2;
+//     int part = partition(dim, begin, end, pivotIndex, points);
+//     if (part > median) return quickSelect(dim, begin, part - 1, median, points);
+//     if (part < median) return quickSelect(dim, part + 1, end, median, points);
+// }
+
+/*
+*   This function will return the kth smallest element in the [begin, end] list, via Wikipedia.
+*/
+template <int Dim>
+Point<Dim> KDTree<Dim>::quickSelect(int dim, int begin, int end, int k, vector<Point<Dim>>& points)
+{
+    if (begin == end) return points[begin]; // If vector to only containts 1 element, return that element
+    int pivotIndex = (begin + end) / 2; // Select some pivot index. In this case, the middle of the list is chosen.
+    int part = partition(dim, begin, end, pivotIndex, points);
+    if (k == part) return points[k];
+    // Recursively search through either the 1st or second half of the list
+    if (k < part) return quickSelect(dim, begin, part - 1, k, points);
+    else return quickSelect(dim, part + 1, end, k, points);
+}
+
+/*
+*   This function will partition all elements of the vector and return the pivotindex, via Wikipedia.
+*   All elements with a smaller dimensional value than the pivot element is positioned at the left of the pivot element.
+*   All elements with a larger dimensional value than the pivot element is positioned at the right of the pivot element.
+*/
+template <int Dim>
+int KDTree<Dim>::partition(int dim, int begin, int end, int pivotIndex, vector<Point<Dim>>& points)
+{
+    Point<Dim> pivot = points[pivotIndex];
+    swap(points[pivotIndex], points[end]);  // Move pivot element to end of vector
+    int storeIndex = begin;
+
+    for (int i = begin; i < end; i++) { // Move all elements less than the pivot element to the beginning of the vector
+      if (smallerDimVal(points[i], pivot, dim)) {
+        swap(points[storeIndex], points[i]);
+        storeIndex++;
+      }
+    }
+    swap(points[storeIndex], points[end]);  // Move pivot element to final position
+    return storeIndex;
+}
+
 
 template <int Dim>
 Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
@@ -71,4 +200,3 @@ Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
 
     return Point<Dim>();
 }
-

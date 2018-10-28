@@ -74,7 +74,7 @@ void AVLTree<K, V>::rebalance(Node*& subtree)
 {
     // your code here
     int balance = heightOrNeg1(subtree->right) - heightOrNeg1(subtree->left);
-    
+
     if (balance >= 2) {
       int rightBalance = heightOrNeg1(subtree->right->right) - heightOrNeg1(subtree->right->left);
       if (rightBalance >= 1) rotateLeft(subtree);
@@ -85,7 +85,7 @@ void AVLTree<K, V>::rebalance(Node*& subtree)
       if (leftBalance <= -1) rotateRight(subtree);
       else rotateLeftRight(subtree);
     }
-    subtree->height = max(heightOrNeg1(subtree->left),heightOrNeg1(subtree->right)) + 1;   
+    subtree->height = max(heightOrNeg1(subtree->left),heightOrNeg1(subtree->right)) + 1;
 }
 
 template <class K, class V>
@@ -120,35 +120,35 @@ void AVLTree<K, V>::remove(Node*& subtree, const K& key)
 
     if (key < subtree->key) {
         // your code here
-	remove(subtree->left, key);
+	      remove(subtree->left, key);
     } else if (key > subtree->key) {
         // your code here
-	remove(subtree->right, key);
+	      remove(subtree->right, key);
     } else {
         if (subtree->left == NULL && subtree->right == NULL) {
             /* no-child remove */
             // your code here
-	    delete subtree;
-	    subtree = NULL;
+    	    delete subtree;
+    	    subtree = NULL;
         } else if (subtree->left != NULL && subtree->right != NULL) {
             /* two-child remove */
             // your code here
-	    Node* IOP = subtree->left;
-            while (IOP->right != NULL) 
-		IOP = IOP->right;	// Find IOP
+	          Node* IOP = subtree->left;
+            while (IOP->right != NULL)
+		        IOP = IOP->right;	// Find IOP
             swap(subtree, IOP);
-	    remove(subtree->left, key);
+	          remove(subtree->left, key);
         } else {
             /* one-child remove */
             // your code here
-	    Node* temp = subtree;
-	    if (subtree->left != NULL && subtree->right == NULL) subtree = subtree->left;
-	    if (subtree->left == NULL && subtree->right != NULL) subtree = subtree->right;
-	    delete temp;
-	    temp = NULL;
+      	    Node* temp = subtree;
+      	    if (subtree->left != NULL && subtree->right == NULL) subtree = subtree->left;
+      	    if (subtree->left == NULL && subtree->right != NULL) subtree = subtree->right;
+      	    delete temp;
+      	    temp = NULL;
         }
         // your code here
-	
+
     }
     if (subtree != NULL)
 	rebalance(subtree);
