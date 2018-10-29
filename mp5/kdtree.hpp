@@ -71,8 +71,8 @@ KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
     for (size_t i = 0; i < newPoints.size(); i++)
       points.push_back(newPoints[i]);
 
-    size = points.size();
-    root = buildTree(0, newPoints.size() - 1, 0, points);
+    size = points.size(); 
+    buildTree(0, 0, newPoints.size() - 1, points, root);
 }
 
 /*
@@ -83,6 +83,9 @@ KDTree<Dim>::KDTree(const KDTree<Dim>& other) {
   /**
    * @todo Implement this function!
    */
+  root = copy(other.root);
+  size = other.size;
+
 }
 
 /*
@@ -93,7 +96,11 @@ const KDTree<Dim>& KDTree<Dim>::operator=(const KDTree<Dim>& rhs) {
   /**
    * @todo Implement this function!
    */
-
+  if (this != &rhs) {
+     clear(root);
+     root = copy(rhs.root);
+     size = rhs.size;
+  }
   return *this;
 }
 
@@ -105,53 +112,54 @@ KDTree<Dim>::~KDTree() {
   /**
    * @todo Implement this function!
    */
-
+  // clear(root);
+  // root = NULL;
 }
 
 /*
-*   This function will build the vector that will represent the KDTree using "Binary Sort"
+*   KDTree copy function
 */
-// template <int Dim>
-// void KDTree<Dim>::buildTree(int begin, int end, int dim, vector<Point<Dim>>& points)
-// {
-//     if (begin >= end) return; // If vector to build is null, return.
-//     int median = (begin + end) / 2;
-//     quickSelect(dim, begin, end, median, points); //Ensure the median point is at the median index
-//     // Recursively contruct the first and second halves of the vector
-//     buildTree(begin, median - 1, (dim + 1) % Dim, points);
-//     buildTree(median + 1, end, (dim + 1) % Dim, points);
-// }
+template <int Dim>
+typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::copy(const KDTreeNode* KDNode)
+{
+    if (KDNode == NULL) return NULL;
+    // Copy this KDNode and it's children
+    KDTreeNode* newNode = new KDTreeNode(KDNode->point);
+    newNode->left = copy(KDNode->left);
+    newNode->right = copy(KDNode->right);
+    return newNode;
+}
+
+/*
+*   KDTree clear function
+*/
+template <int Dim>
+void KDTree<Dim>::clear(KDTreeNode* KDNode)
+{
+    if (KDNode == NULL) return;
+
+    clear(KDNode->left);
+    clear(KDNode->right);
+    delete KDNode;
+}
 
 /*
 *   This function will sort the vector that will represent the KDTree using "Binary Sort."
 *   During the sorting process, it will recursively build the K-d Tree.
 */
 template <int Dim>
-typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::buildTree(int dim, int begin, int end, vector<Point<Dim>>& points)
+// typename KDTree<Dim>::KDTreeNode*
+void KDTree<Dim>::buildTree(int dim, int begin, int end, vector<Point<Dim>>& points, KDTreeNode*& KDNode)
 {
-    if (begin >= end) return NULL; // If vector to build is null, return.
+    if (begin > end) return; // If vector to build is null, return.
     int median = (begin + end) / 2;
     Point<Dim> KDPoint = quickSelect(dim, begin, end, median, points); //Ensure the median point is at the median index
-    KDTreeNode* KDNode = new KDTreeNode(KDPoint);
-    // Recursively contruct the first and second halves of the vector
-    KDTreeNode* left = buildTree((dim + 1) % Dim, begin, median - 1, points);
-    KDTreeNode* right = buildTree((dim + 1) % Dim, median + 1, end, points);
-
-    return KDNode;
+    KDNode = new KDTreeNode(KDPoint);
+    // Recursively contruct the left and right halves of the KDTree
+    buildTree((dim + 1) % Dim, begin, median - 1, points, KDNode->left);
+    buildTree((dim + 1) % Dim, median + 1, end, points, KDNode->right);
+    //return KDNode;
 }
-
-/*
-*   This function will build the vector that will represent the KDTree using "Binary Sort"
-*/
-// template <int Dim>
-// void KDTree<Dim>::quickSelect(int dim, int begin, int end, int median, vector<Point<Dim>>& points)
-// {
-//     if (begin >= end) return; // If vector to build is null, return.
-//     int pivotIndex = (begin + end) / 2;
-//     int part = partition(dim, begin, end, pivotIndex, points);
-//     if (part > median) return quickSelect(dim, begin, part - 1, median, points);
-//     if (part < median) return quickSelect(dim, part + 1, end, median, points);
-// }
 
 /*
 *   This function will return the kth smallest element in the [begin, end] list, via Wikipedia.
@@ -180,7 +188,7 @@ int KDTree<Dim>::partition(int dim, int begin, int end, int pivotIndex, vector<P
     swap(points[pivotIndex], points[end]);  // Move pivot element to end of vector
     int storeIndex = begin;
 
-    for (int i = begin; i < end; i++) { // Move all elements less than the pivot element to the beginning of the vector
+    for (int i = begin; i < end; i++) { // Move all elements with a smaller dimensional value than the pivot element to the left of the pivot
       if (smallerDimVal(points[i], pivot, dim)) {
         swap(points[storeIndex], points[i]);
         storeIndex++;
