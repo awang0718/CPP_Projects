@@ -67,11 +67,17 @@ KDTree<Dim>::KDTree(const vector<Point<Dim>>& newPoints)
     /**
      * @todo Implement this function!
      */
+    if(newPoints.empty()){
+      root = NULL;
+      size = 0;
+      return;
+    }
+
     vector<Point<Dim>> points;
     for (size_t i = 0; i < newPoints.size(); i++)
       points.push_back(newPoints[i]);
 
-    size = points.size(); 
+    size = points.size();
     buildTree(0, 0, newPoints.size() - 1, points, root);
 }
 
@@ -112,15 +118,15 @@ KDTree<Dim>::~KDTree() {
   /**
    * @todo Implement this function!
    */
-  // clear(root);
-  // root = NULL;
+  clear(root);
+  root = NULL;
 }
 
 /*
 *   KDTree copy function
 */
 template <int Dim>
-typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::copy(const KDTreeNode* KDNode)
+typename KDTree<Dim>::KDTreeNode* KDTree<Dim>::copy(const KDTreeNode*& KDNode)
 {
     if (KDNode == NULL) return NULL;
     // Copy this KDNode and it's children
@@ -199,12 +205,135 @@ int KDTree<Dim>::partition(int dim, int begin, int end, int pivotIndex, vector<P
 }
 
 
+// template <int Dim>
+// Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
+// {
+//     /**
+//      * @todo Implement this function!
+//      */
+//
+//     return findNearNeighbor(Dim, root->point, query, root);
+//
+//     // return Point<Dim>();
+// }
+//
+//
+// template <int Dim>
+// Point<Dim> KDTree<Dim>::findNearNeighbor(int dim, const Point<Dim>& currentBest, const Point<Dim>& target, KDTreeNode* KDNode) const
+// {
+//     if (smallerDimVal(target, currentBest, dim)) {
+//       if (KDNode->left != NULL)
+//         return findNearNeighbor((dim + 1) % Dim, KDNode->left->point, target, KDNode->left);
+//       else
+//         return KDNode->point;
+//     }
+//     else {
+//       if (KDNode->right != NULL)
+//         return findNearNeighbor((dim + 1) % Dim, KDNode->right->point, target, KDNode->right);
+//       else
+//         return KDNode->point;
+//     }
+//
+//
+// }
+
+
 template <int Dim>
 Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
 {
     /**
      * @todo Implement this function!
      */
-
+     //cout<<"query "<<query<<endl;
+    if(root==NULL)
     return Point<Dim>();
+    Point<Dim> p=findnhelper(root,0,Point<Dim>(),query);
+    //cout<<"final result "<<p<<endl;
+    return p;
 }
+
+template <int Dim>
+Point<Dim> KDTree<Dim>::findnhelper(KDTreeNode * subroot,int d,Point<Dim> currentBest,Point<Dim>query) const{
+  int flag=0;
+  // cout<<"current point :"<<subroot->point<<" radius"<<getradius(subroot->point,query)<<endl;
+  if(subroot->point==query)
+    return query;
+  if(smallerDimVal(query,subroot->point,d)){
+    if(subroot->left==NULL){
+      currentBest=subroot->point;
+      int r=getradius(currentBest,query);
+      if(subroot->right!=NULL&&biggerraduis(query,subroot->point,d%Dim,r)){
+      Point<Dim> potential=findnhelper(subroot->right,(d+1)%Dim,currentBest,query);
+      if(shouldReplace(query,currentBest,potential))
+        return potential;
+      return currentBest;
+      }
+      else{
+        return currentBest;
+      }
+    }
+    Point<Dim> potential=findnhelper(subroot->left,(d+1)%Dim,currentBest,query);
+    if(shouldReplace(query,subroot->point,potential)) currentBest=potential;
+    else
+    currentBest=subroot->point;
+    flag=1;
+  }
+  else{
+    if(subroot->right==NULL){
+      currentBest=subroot->point;
+      int r=getradius(currentBest,query);
+      if(subroot->left!=NULL&&biggerraduis(query,subroot->point,d%Dim,r)){
+      Point<Dim> potential= findnhelper(subroot->left,(d+1)%Dim,currentBest,query);
+      if(shouldReplace(query,currentBest,potential))
+          return potential;
+      return currentBest;
+      }
+      else{
+        return currentBest;
+      }
+    }
+    Point<Dim> potential=findnhelper(subroot->right,(d+1)%Dim,currentBest,query);
+    if(shouldReplace(query,subroot->point,potential)) currentBest=potential;
+    else currentBest=subroot->point;
+  }
+  if(flag){
+    int r=getradius(currentBest,query);
+    if(subroot->right!=NULL&&biggerraduis(query,subroot->point,d%Dim,r)){
+      Point<Dim> potential=findnhelper(subroot->right,(d+1)%Dim,currentBest,query);
+      if(shouldReplace(query,currentBest,potential))
+        return potential;
+      return currentBest;
+    }
+    else{
+      return currentBest;
+    }
+  }
+  else{
+    int r=getradius(currentBest,query);
+    if(subroot->left!=NULL&&biggerraduis(query,subroot->point,d%Dim,r)){
+      Point<Dim> potential= findnhelper(subroot->left,(d+1)%Dim,currentBest,query);
+      if(shouldReplace(query,currentBest,potential))
+        return potential;
+      return currentBest;
+    }
+    else{
+      return currentBest;
+    }
+  }
+
+}
+
+template <int Dim>
+bool KDTree<Dim>::biggerraduis(Point<Dim> target,Point<Dim> subroot,int d,int radius) const{
+  int distances=abs(subroot[d]-target[d]);
+  if(distances * distances<=radius) return true;
+  return false;
+}
+template <int Dim>
+int KDTree<Dim>::getradius(Point<Dim> first,Point<Dim>second) const{
+    int sum=0;
+    for(long i=0;i<Dim;i++){
+      sum+=pow((first[i]-second[i]),2);
+    }
+    return sum;
+  }

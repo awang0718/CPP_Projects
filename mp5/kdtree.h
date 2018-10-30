@@ -259,12 +259,18 @@ class KDTree
     /**
      * @todo Add your helper functions here.
      */
-    KDTreeNode* copy(const KDTreeNode* KDNode);
+    KDTreeNode* copy(const KDTreeNode*& KDNode);
     void clear(KDTreeNode* KDNode);
 
     void buildTree(int begin, int end, int dim, vector<Point<Dim>>& points, KDTreeNode*& KDNode);
     Point<Dim> quickSelect(int dim, int begin, int end, int median, vector<Point<Dim>>& points);
     int partition(int dim, int begin, int end, int pivotIndex, vector<Point<Dim>>& points);
+
+    Point<Dim> findNearNeighbor(int dim, const Point<Dim>& currentBest, const Point<Dim>& target, KDTreeNode* KDNode) const;
+
+    Point<Dim> findnhelper(KDTreeNode * subroot,int d,Point<Dim> currentBest,Point<Dim>query) const;
+    bool biggerraduis(Point<Dim> target,Point<Dim> subroot,int d,int radius) const;
+    int getradius(Point<Dim> first,Point<Dim>second) const;
 };
 
 #include "kdtree.hpp"
