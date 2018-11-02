@@ -237,7 +237,9 @@ int KDTree<Dim>::partition(int dim, int begin, int end, int pivotIndex, vector<P
 //
 // }
 
-
+/*
+*   This function will find the nearest poin to query.
+*/
 template <int Dim>
 Point<Dim> KDTree<Dim>::findNearestNeighbor(const Point<Dim>& query) const
 {
@@ -325,13 +327,13 @@ Point<Dim> KDTree<Dim>::findnhelper(KDTreeNode * subroot,int d,Point<Dim> curren
 
 template <int Dim>
 bool KDTree<Dim>::biggerraduis(Point<Dim> target,Point<Dim> subroot,int d,int radius) const{
-  int distances=abs(subroot[d]-target[d]);
+  double distances=abs(subroot[d]-target[d]);
   if(distances * distances<=radius) return true;
   return false;
 }
 template <int Dim>
 int KDTree<Dim>::getradius(Point<Dim> first,Point<Dim>second) const{
-    int sum=0;
+    double sum=0;
     for(long i=0;i<Dim;i++){
       sum+=pow((first[i]-second[i]),2);
     }

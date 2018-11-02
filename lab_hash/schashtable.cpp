@@ -62,6 +62,8 @@ void SCHashTable<K, V>::insert(K const& key, V const& value)
      * @todo Implement this function.
      *
      */
+    pair<K,V> newPair = pair<K,V>(key, value);   
+    table[hash(key, size)].push_front(newPair);
 }
 
 template <class K, class V>
@@ -74,6 +76,12 @@ void SCHashTable<K, V>::remove(K const& key)
      * Please read the note in the lab spec about list iterators and the
      * erase() function on std::list!
      */
+
+    for(int i = 0; i < size; i++){
+	for(int j = 0; j < table[i].size(); j++) {
+	    if(
+	}
+    }
     (void) key; // prevent warnings... When you implement this function, remove this line.
 }
 
