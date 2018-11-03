@@ -8,11 +8,11 @@
  */
 
 #include "schashtable.h"
- 
+
 using hashes::hash;
 using std::list;
 using std::pair;
-  
+
 template <class K, class V>
 SCHashTable<K, V>::SCHashTable(size_t tsize)
 {
@@ -62,8 +62,13 @@ void SCHashTable<K, V>::insert(K const& key, V const& value)
      * @todo Implement this function.
      *
      */
-    pair<K,V> newPair = pair<K,V>(key, value);   
+    ++elems;
+
+    if (shouldResize()) resizeTable();
+
+    pair<K,V> newPair = pair<K,V>(key, value);
     table[hash(key, size)].push_front(newPair);
+
 }
 
 template <class K, class V>
@@ -77,12 +82,16 @@ void SCHashTable<K, V>::remove(K const& key)
      * erase() function on std::list!
      */
 
-    for(int i = 0; i < size; i++){
-	for(int j = 0; j < table[i].size(); j++) {
-	    if(
-	}
+    if (!keyExists(key)) return;
+    for (it = table[hash(key, size)].begin(); it != table[hash(key, size)].end(); it++) {
+        if (it->first == key) {
+          table[hash(key, size)].erase(it);
+          return;
+        }
     }
-    (void) key; // prevent warnings... When you implement this function, remove this line.
+    --elems;
+
+    // (void) key; // prevent warnings... When you implement this function, remove this line.
 }
 
 template <class K, class V>
@@ -92,6 +101,9 @@ V SCHashTable<K, V>::find(K const& key) const
     /**
      * @todo: Implement this function.
      */
+    typename list<pair<K, V>>::iterator it;
+    for (it = table[hash(key, size)].begin(); it != table[hash(key, size)].end(); it++)
+        if (it->first == key) return it->second;
 
     return V();
 }
@@ -150,4 +162,15 @@ void SCHashTable<K, V>::resizeTable()
      *
      * @hint Use findPrime()!
      */
+    size_t newSize = findPrime(size * 2);
+    std::list<std::pair<K, V>>* newTable = new list<pair<K, V>>[newSize];
+    for (size_t i = 0; i < size; i++) {
+	     for (it = table[i].begin(); it != table[i].end(); it++) {
+           pair<K, V> newPair = pair<K, V>(it->first, it->second);
+           newTable[hash(it->first, newSize)].push_front(newPair);
+        }
+    }
+    delete[] table;
+    size = newSize;
+    table = newTable;
 }
