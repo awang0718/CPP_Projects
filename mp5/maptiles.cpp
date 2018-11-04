@@ -33,6 +33,7 @@ MosaicCanvas* mapTiles(SourceImage const& theSource,
      for(unsigned int i = 0; i < theTiles.size(); i++) {
        Point<3> p=convertToXYZ(theTiles[i].getAverageColor());	// Retrieve point from average color
        points[i] = p;			// Set point in vector
+       //points.push_back(p);
        map[p] = &theTiles[i];		// Add point and its corresponding tile image to map
      }
 
