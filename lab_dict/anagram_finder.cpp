@@ -21,7 +21,7 @@ const string USAGE =
 
 int main(int argc, char* argv[])
 {
-    string word_list_filename = "data/words.txt";
+    string word_list_filename = "tests/words.txt";
     vector<string> args;
     bool find_all = false;
     string out_filename = "";
