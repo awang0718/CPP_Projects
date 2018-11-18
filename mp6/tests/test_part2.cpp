@@ -1,5 +1,5 @@
 
-/**
+
 #include "../cs225/catch/catch.hpp"
 #include <iostream>
 #include <fstream>
@@ -10,6 +10,7 @@
 #include "../dsets.h"
 #include "../maze.h"
 #include "mazereader.h"
+#include <unistd.h>
 
 using namespace cs225;
 using namespace std;
@@ -184,7 +185,7 @@ TEST_CASE("testMakeMazeRandom", "[weight=10][part2]")
 	SquareMaze maze1;
 	maze1.makeMaze(50, 50);
 	PNG *p = maze1.drawMaze();
-	//sleep(2);
+	sleep(2);
 	SquareMaze maze2;
 	maze2.makeMaze(50, 50);
 	p = maze2.drawMaze();
@@ -349,5 +350,3 @@ TEST_CASE("testDrawSolutionLarge", "[weight=10][part2]")
 	actualOutput->writeToFile("testDrawSolutionLarge"+ string(".png"));
 	REQUIRE(*actualOutput == solnImage);
 }
- */
-
