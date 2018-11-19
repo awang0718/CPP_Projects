@@ -313,6 +313,7 @@ TEST_CASE("testDrawMazeMed", "[weight=10][part2]")
 	SquareMaze maze;
 	copyMaze(soln, &maze);
 	PNG * actualOutput = maze.drawMaze();
+	actualOutput->writeToFile("testDrawMazeMed"+ string(".png"));
 	REQUIRE(*actualOutput == solnImage);
 }
 

@@ -22,6 +22,7 @@ public:
   vector<int> solveMaze();
   PNG* drawMaze() const;
   PNG* drawMazeWithSolution();
+  PNG* drawCreativeMaze() const;
   ~SquareMaze();
 private:
   bool canremove(int x,int y,int wall);

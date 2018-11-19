@@ -9,11 +9,13 @@
 #include <queue>
 #include<algorithm>
 #include<iostream>
+#include<sys/time.h>
 using namespace std;
 
 SquareMaze::SquareMaze()
 {
-
+  this->width_ = 0;
+  this->height_ = 0;  
 }
 
 void SquareMaze::makeMaze(int width,int height)
@@ -31,7 +33,10 @@ void SquareMaze::makeMaze(int width,int height)
   }
   maze.addelements(n);
 
-  srand((unsigned)time(NULL));
+  // srand((unsigned)time(NULL));
+  static struct timeval tv;
+  gettimeofday(&tv, NULL);
+
   int X = rand() % width;
   int Y = rand() % height;
   int idx = Y*width+X;
@@ -237,27 +242,27 @@ PNG* SquareMaze::drawMazeWithSolution()
         p=HSLAPixel(0,1,0.5,1);
       }
     }
-      if(i==1){
-        k=y+10;
-        for(;y<k;y++){
-          HSLAPixel &p=image->getPixel(x,y);
-          p=HSLAPixel(0,1,0.5,1);
-        }
+    if(i==1){
+      k=y+10;
+      for(;y<k;y++){
+        HSLAPixel &p=image->getPixel(x,y);
+        p=HSLAPixel(0,1,0.5,1);
       }
-        if(i==2){
-          k=x-10;
-          for(;x>k;x--){
-            HSLAPixel &p=image->getPixel(x,y);
-            p=HSLAPixel(0,1,0.5,1);
-          }
-        }
-          if(i==3){
-            k=y-10;
-            for(;y>k;y--){
-              HSLAPixel &p=image->getPixel(x,y);
-              p=HSLAPixel(0,1,0.5,1);
-            }
-          }
+    }
+    if(i==2){
+      k=x-10;
+      for(;x>k;x--){
+        HSLAPixel &p=image->getPixel(x,y);
+        p=HSLAPixel(0,1,0.5,1);
+      }
+    }
+    if(i==3){
+      k=y-10;
+      for(;y>k;y--){
+        HSLAPixel &p=image->getPixel(x,y);
+        p=HSLAPixel(0,1,0.5,1);
+      }
+    }
   }
   if(1){
     HSLAPixel &p=image->getPixel(x,y);
