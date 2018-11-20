@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include <utility>      // std::pair, std::make_pair
 #include <queue>
-#include<algorithm>
-#include<iostream>
-#include<sys/time.h>
+#include <algorithm>
+#include <iostream>
+#include <sys/time.h>
 using namespace std;
 
 SquareMaze::SquareMaze()
@@ -100,7 +100,7 @@ bool SquareMaze::canTravel(int x, int y, int dir)
   return true;
 }
 
-void SquareMaze::setWall(int x, int	y, int dir, bool exists )
+void SquareMaze::setWall(int x, int y, int dir, bool exists )
 {
   if (dir == 0) {
     if (exists) grid[pair<int,int>(x, y)].first = 1;
@@ -133,14 +133,14 @@ vector<int> SquareMaze::solveMaze()
     int x=q.front().first;
     int y=q.front().second;
     q.pop();
-    //cout<<"x: "<<x<<" y: "<<y<<endl;
+    // cout<<"x: "<<x<<" y: "<<y<<endl;
     visited[x][y]=1;
 
     if (y == height_-1)
       lastRow.push_back(pair<int,int>(x,y));
 
     if(canTravel(x,y,0) && !visited[x+1][y])
-    {
+    { 
     	q.push(pair<int,int>(x+1,y));
       map[pair<int,int>(x+1,y)]=pair<int,int>(x,y);
     }
@@ -196,7 +196,7 @@ PNG* SquareMaze::drawMaze() const
   for(int i=0;i<width_*10+1;i++){
     HSLAPixel &p=image->getPixel(i,0);
     HSLAPixel &p2=image->getPixel(i,height_*10);
-    if(i>9 || i < 1)
+    if(i > 9 || i < 1)
     p=HSLAPixel(0,0,0);
     p2=HSLAPixel(0,0,0);
   }
@@ -225,6 +225,7 @@ PNG* SquareMaze::drawMaze() const
 
   return image;
 }
+
 PNG* SquareMaze::drawMazeWithSolution()
 {
 
@@ -271,8 +272,8 @@ PNG* SquareMaze::drawMazeWithSolution()
   }
   x=x-5;
   for(int k=1;k<10;k++){
-  HSLAPixel &p2=image->getPixel(x+k,height_*10);
-  p2=HSLAPixel(1,1,1);
+    HSLAPixel &p2=image->getPixel(x+k,height_*10);
+    p2=HSLAPixel(1,1,1);
 
   }
 

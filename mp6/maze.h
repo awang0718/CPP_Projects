@@ -18,11 +18,15 @@ public:
   SquareMaze();
   void makeMaze(int,int);
   bool canTravel(int x, int y, int dir);
-  void setWall(int x, int y, int dir, bool exists );
+  void setWall(int x, int y, int dir, bool exists);
   vector<int> solveMaze();
   PNG* drawMaze() const;
   PNG* drawMazeWithSolution();
-  PNG* drawCreativeMaze() const;
+
+  void makeCreativeMaze(int width,int height,int radius);
+  void setCreativeWall(int x, int y, int dir, bool exists);
+
+  PNG* drawCreativeMazeWithSolution();
   ~SquareMaze();
 private:
   bool canremove(int x,int y,int wall);
