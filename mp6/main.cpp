@@ -52,7 +52,7 @@ void SquareMaze::makeCreativeMaze(int width,int height, int radius)
     Y = rand() % height;
     idx = Y*width+X;
   }
-  cout << "n: " << n << endl;
+  // cout << "n: " << n << endl;
 }
 
 void SquareMaze::setCreativeWall(int x, int y, int dir, bool exists)
@@ -129,14 +129,20 @@ PNG* SquareMaze::drawCreativeMazeWithSolution()
     p2=HSLAPixel(1,1,1);
 
   }
-  cout << "x: " << y << "\tx: " << y << endl;  
-  for(int i = height_*10 - 1; i > (height_ - 25) *10 - 1; i--){
-    for(int j = 1; j < (height_ - 25) * 10 + 1; j++){
+  // cout << "x: " << y << "\tx: " << y << endl;  
+  for(int i = height_*10; i > (height_ - 25) * 10 - 1; i--){
+    for(int j = 0; j < (height_ - 25) * 10; j++){
       // cout << "i: " << i << "\tj: " << j << endl;
       HSLAPixel &p=image->getPixel(i,j);
-      p=HSLAPixel(0,1,0.5 - i*.0005,1);
+      // p=HSLAPixel(0,1,0.5 - i*.0005,1);
+      p=HSLAPixel(1,1,1);
     }
   }  
+
+  for(int j = 1; j < (height_ - 25) * 10 + 1; j++){
+    HSLAPixel &p2=image->getPixel((height_ - 25) *10,j);
+    p2=HSLAPixel(0,0,0);
+  }
 
   return image;
 }
