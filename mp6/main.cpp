@@ -76,7 +76,7 @@ void SquareMaze::setCreativeWall(int x, int y, int dir, bool exists)
       if (exists) grid[pair<int,int>(x, y)].second = 1;
       else grid[pair<int,int>(x, y)].second = 0;
     }
-  }	
+  }
   // cout << "setCreativeWall > x: " << x  << "\ty: " << y << endl;
 }
 
@@ -129,7 +129,7 @@ PNG* SquareMaze::drawCreativeMazeWithSolution()
     p2=HSLAPixel(1,1,1);
 
   }
-  // cout << "x: " << y << "\tx: " << y << endl;  
+  // cout << "x: " << y << "\tx: " << y << endl;
   for(int i = height_*10; i > (height_ - 25) * 10 - 1; i--){
     for(int j = 0; j < (height_ - 25) * 10; j++){
       // cout << "i: " << i << "\tj: " << j << endl;
@@ -137,9 +137,9 @@ PNG* SquareMaze::drawCreativeMazeWithSolution()
       // p=HSLAPixel(0,1,0.5 - i*.0005,1);
       p=HSLAPixel(1,1,1);
     }
-  }  
+  }
 
-  for(int j = 1; j < (height_ - 25) * 10 + 1; j++){
+  for(int j = 0; j < (height_ - 25) * 10 + 1; j++){
     HSLAPixel &p2=image->getPixel((height_ - 25) *10,j);
     p2=HSLAPixel(0,0,0);
   }
@@ -170,6 +170,6 @@ int main()
     // cout << "drawCreativeMaze" << endl;
     // p2->writeToFile("creative" + string(".png"));
     */
-    
+
     return 0;
 }
