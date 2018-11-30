@@ -6,7 +6,6 @@
 #include "NimLearner.h"
 #include <ctime>
 
-
 /**
  * Constructor to create a game of Nim with `startingTokens` starting tokens.
  *
@@ -26,6 +25,33 @@
  */
 NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
     /* Your code goes here! */
+    for (int i = startingTokens; i >= 0; i--) {
+    	g_.insertVertex("p1-" + std::to_string(i));
+    	g_.insertVertex("p2-" + std::to_string(i));
+    }
+
+    for (int i = startingTokens; i>= 1; i--) {
+      Vertex ver1_1 = "p1-" + std::to_string(i);
+    	Vertex ver1_2 = "p1-" + std::to_string(i - 1);
+      Vertex ver1_3 = "p1-" + std::to_string(i - 2);
+    	Vertex ver2_1 = "p2-" + std::to_string(i);
+      Vertex ver2_2 = "p2-" + std::to_string(i - 1);
+      Vertex ver2_3 = "p2-" + std::to_string(i - 2);
+
+    	g_.insertEdge(ver1_1, ver2_2);
+    	g_.setEdgeWeight(ver1_1, ver2_2, 0);
+      g_.insertEdge(ver2_1, ver1_2);
+    	g_.setEdgeWeight(ver2_1, ver1_2, 0);
+
+    	if (i > 1) {
+        g_.insertEdge(ver1_1, ver2_3);
+        g_.setEdgeWeight(ver1_1, ver2_3, 0);
+      	g_.insertEdge(ver2_1, ver1_3);
+      	g_.setEdgeWeight(ver2_1, ver1_3, 0);
+      }
+    }
+
+    startingVertex_ = "p1-" + std::to_string(startingTokens);
 }
 
 /**
@@ -40,6 +66,14 @@ NimLearner::NimLearner(unsigned startingTokens) : g_(true, true) {
 std::vector<Edge> NimLearner::playRandomGame() const {
   vector<Edge> path;
  /* Your code goes here! */
+  Vertex startVer = startingVertex_;
+  while (g_.getAdjacent(startVer).size() > 0) {
+    vector<Vertex> adjacentVer = g_.getAdjacent(startVer);
+    Vertex nextVer = adjacentVer[rand() % adjacentVer.size()];
+    path.push_back(g_.getEdge(startVer, nextVer));
+
+    startVer = nextVer;
+  }
   return path;
 }
 
@@ -61,6 +95,15 @@ std::vector<Edge> NimLearner::playRandomGame() const {
  */
 void NimLearner::updateEdgeWeights(const std::vector<Edge> & path) {
  /* Your code goes here! */
+   int reward = 1;
+   for (int i = path.size() - 1; i >= 0; i--) {
+     Edge edge = path[i];
+     // cout<<g_.getVertexLabel(edge.source)<<" to "<<g_.getVertexLabel(edge.dest)<<endl;
+     int prev_Weight = g_.getEdgeWeight(edge.source, edge.dest);
+     g_.setEdgeWeight(edge.source, edge.dest, prev_Weight + reward);
+     // cout<<"weight: "<<oldWeight<<"new: "<<oldWeight+i<<endl;
+     reward = reward * -1;
+   }
 }
 
 /**
