@@ -6,7 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <set>
-
+#include <iostream>
 #include "graph.h"
 #include "edge.h"
 
@@ -22,6 +22,23 @@ NetworkFlow::NetworkFlow(Graph & startingGraph, Vertex source, Vertex sink) :
   g_(startingGraph), residual_(Graph(true,true)), flow_(Graph(true,true)), source_(source), sink_(sink) {
 
   // YOUR CODE HERE
+  vector<Vertex> vertices = g_.getVertices();
+  vector<Edge> edges = g_.getEdges();
+
+  for (size_t i = 0; i < vertices.size(); i++) {
+    flow_.insertVertex(vertices[i]);
+    residual_.insertVertex(vertices[i]);
+  }
+
+  for (size_t i = 0; i < edges.size(); i++) {
+    flow_.insertEdge(edges[i].source, edges[i].dest);
+    flow_.setEdgeWeight(edges[i].source, edges[i].dest, 0);
+    residual_.insertEdge(edges[i].source, edges[i].dest);
+    residual_.setEdgeWeight(edges[i].source, edges[i].dest, edges[i].getWeight());
+    residual_.insertEdge(edges[i].dest, edges[i].source);
+    residual_.setEdgeWeight(edges[i].dest, edges[i].source, 0);
+  }
+  maxFlow_ = 0;
 }
 
   /**
@@ -34,7 +51,7 @@ NetworkFlow::NetworkFlow(Graph & startingGraph, Vertex source, Vertex sink) :
    * @@params: visited -- A set of vertices we have visited
    */
 
-bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink, 
+bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink,
   std::vector<Vertex> &path, std::set<Vertex> &visited) {
 
   if (visited.count(source) != 0)
@@ -84,7 +101,12 @@ bool NetworkFlow::findAugmentingPath(Vertex source, Vertex sink, std::vector<Ver
 
 int NetworkFlow::pathCapacity(const std::vector<Vertex> & path) const {
   // YOUR CODE HERE
-  return 0;
+  int capacity = INT_MAX;
+  for (size_t i = 0; i < path.size() - 1; i++) {
+    if (residual_.getEdgeWeight(path[i], path[i+1]) < capacity)
+      capacity = residual_.getEdgeWeight(path[i], path[i+1]);
+  }
+  return capacity;
 }
 
   /**
@@ -97,6 +119,26 @@ int NetworkFlow::pathCapacity(const std::vector<Vertex> & path) const {
 
 const Graph & NetworkFlow::calculateFlow() {
   // YOUR CODE HERE
+  std::vector<Vertex> path;
+
+  // int maxFlow_ = 0;
+  while (findAugmentingPath(source_, sink_, path)) {
+    int capacity = pathCapacity(path);
+
+    // std::cout << "Capacity: " << capacity << std::endl;
+    // std::cout << "Old MaxFlow: " << maxFlow_ << std::endl;
+    maxFlow_ +=  capacity;
+    // std::cout << "New MaxFlow: " << maxFlow_ << "\n" << std::endl;
+
+    for (size_t i = 0; i < path.size() - 1; i++) {
+      if (!flow_.edgeExists(path[i], path[i+1]))
+        flow_.setEdgeWeight(path[i+1], path[i], flow_.getEdgeWeight(path[i+1], path[i]) - capacity);
+      else
+        flow_.setEdgeWeight(path[i], path[i+1], flow_.getEdgeWeight(path[i], path[i+1]) + capacity);
+      residual_.setEdgeWeight(path[i], path[i+1], residual_.getEdgeWeight(path[i], path[i+1]) - capacity);
+      residual_.setEdgeWeight(path[i+1], path[i], residual_.getEdgeWeight(path[i+1], path[i]) + capacity);
+    }
+  }
   return flow_;
 }
 
@@ -115,4 +157,3 @@ const Graph & NetworkFlow::getFlowGraph() const {
 const Graph & NetworkFlow::getResidualGraph() const {
   return residual_;
 }
-
