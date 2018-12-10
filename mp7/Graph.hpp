@@ -120,18 +120,18 @@ template <class V, class E>
 void Graph<V,E>::removeEdge(const edgeListIter & it) {
   // TODO: Part 2
   std::string key1=it->get().dest().key(),key2=it->get().source().key();
-  for(auto i=adjList[key1].begin();i<adjList[key1].end();i++)
+  for(auto i=adjList.at(key1).begin();i!=adjList.at(key1).end();i++)
   {
   	if((*i)->get().dest().key()==key2||(*i)->get().source().key()==key2)
   	{
-   		adjList[key1].erase[i];
+   		adjList[key1].erase(i);
   	}
   }
-  for(auto i=adjList[key2].begin();i<adjList[key2].end();i++)
+  for(auto i=adjList[key2].begin();i!=adjList[key2].end();i++)
   {
   	if((*i)->get().dest().key()==key1||(*i)->get().source().key()==key1)
   	{
-   		adjList[key2].erase[i];
+   		adjList[key2].erase(i);
   	}
   }
   edgeList.erase(it);
@@ -183,4 +183,3 @@ bool Graph<V,E>::isAdjacent(const std::string key1, const std::string key2) cons
   }
   return false;
 }
-

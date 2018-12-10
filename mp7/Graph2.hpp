@@ -75,9 +75,9 @@
      {
        string key;
        if(t.key()==i->get().dest().key())
-       key=i->get().source().key();
+        key=i->get().source().key();
        else
-       key=i->get().dest().key();
+        key=i->get().dest().key();
        V& t2=vertexMap.at(key);
        if(t2["visited"]=="1")
        continue;
