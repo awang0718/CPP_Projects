@@ -48,18 +48,18 @@ V & Graph<V,E>::insertVertex(std::string key) {
 template <class V, class E>
 void Graph<V,E>::removeVertex(const std::string & key) {
   // TODO: Part 2
-  V &curv=vertexMap[key];
-  for(auto &i:	adjList[key])
+  V &curv=vertexMap.at(key);
+  for(auto &i: adjList[key])
   {
     string tkey;
-    if(curv==i->source)
-   		tkey=i->get().dest().key();
+    if(curv==(*i).get().source())
+      tkey=(*i).get().dest().key();
     else
-      tkey=i->get().source().key();
+      tkey=(*i).get().source().key();
 
-    for(auto j=adjList[tkey].begin();j<adjList[tkey].end();j++)
+    for(auto j=adjList[tkey].begin();j!=adjList[tkey].end();j++)
     {
-     	   if((*j)->get()==i->get())
+          if((*j)->get()==i->get())
          {
            adjList[tkey].erase(j);
            break;
